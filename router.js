@@ -1,9 +1,12 @@
-function route(handle,pathname) {
+function route(handle,pathname,response) {
 	console.log("routing request to::"+pathname)
 	if (typeof handle[pathname] === 'function') {
-		handle[pathname]();
+		handle[pathname](response);
 	} else {
 		console.log('No such file found');
+		response.writeHead(404,{"Content-type":"text/plain"});
+		response.write("404 File Not Found");
+		response.end();
 	}
 	
 }
