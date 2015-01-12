@@ -1,8 +1,10 @@
 var exec = require("child_process").exec,
-	querystring = require("querystring");
+	querystring = require("querystring"),
+	fs = require("fs"),
+	path = require("path");
 
 
-function start(response) {
+function start(response,postData) {
 	console.log('Request handler for start called');
 	/*
 	var content = "empty";
@@ -14,6 +16,7 @@ function start(response) {
 		response.end();
 	});
 	*/
+	/*
 	var body = '<html>'+
 				'<head>'+
 				'<meta http-equiv="Content-Type" content="text/html; '+
@@ -29,7 +32,54 @@ function start(response) {
 	response.writeHead(200,{"Content-Type":"text/html"});
 	response.write(body);
 	response.end();
+	*/
+	var filename = "form.htm",
+		ext = path.extname(filename);
+		
+	var localPath = "./";
+	var validExtensions = {
+		".html" : "text/html",			
+		".htm" : "text/html",			
+		".js": "application/javascript", 
+		".css": "text/css",
+		".txt": "text/plain",
+		".jpg": "image/jpeg",
+		".gif": "image/gif",
+		".png": "image/png"
+	};
+	var isValidExt = validExtensions[ext];
+ 
+	if (isValidExt) {
+	localPath += filename;
+		path.exists(localPath, function(exists) {
+			if(exists) {
+				console.log("Serving file: " + localPath);
+				getFile(localPath, response, validExtensions[ext]);
+			} else {
+				console.log("File not found: " + localPath);
+				response.writeHead(404);
+				response.end();
+			}
+		});
+ 
+	} else {
+		console.log("Invalid file extension detected: " + ext)
+	}
 
+}
+
+function getFile(localPath,response,ext) {
+	fs.readFile(localPath, function (err,contents) {
+		if (!err) {
+			response.setHeader("Content-Length",contents.length);
+			response.setHeader("Content-Type",ext);
+			response.statusCode = 200;
+			response.end(contents);
+		} else {
+			response.writeHead(500);
+			response.end();
+		}
+	});
 }
 
 function upload(response,postData) {
