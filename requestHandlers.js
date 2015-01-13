@@ -33,37 +33,42 @@ function start(response,postData) {
 	response.write(body);
 	response.end();
 	*/
-	var filename = "form.htm",
-		ext = path.extname(filename);
-		
-	var localPath = "./";
-	var validExtensions = {
-		".html" : "text/html",			
-		".htm" : "text/html",			
-		".js": "application/javascript", 
-		".css": "text/css",
-		".txt": "text/plain",
-		".jpg": "image/jpeg",
-		".gif": "image/gif",
-		".png": "image/png"
-	};
-	var isValidExt = validExtensions[ext];
- 
-	if (isValidExt) {
-	localPath += filename;
-		path.exists(localPath, function(exists) {
-			if(exists) {
-				console.log("Serving file: " + localPath);
-				getFile(localPath, response, validExtensions[ext]);
-			} else {
-				console.log("File not found: " + localPath);
-				response.writeHead(404);
-				response.end();
-			}
-		});
- 
+	if (postData === null || postData === undefined || postData === "") {
+		var filename = "form.htm",
+			ext = path.extname(filename);
+			
+		var localPath = "./";
+		var validExtensions = {
+			".html" : "text/html",			
+			".htm" : "text/html",			
+			".js": "application/javascript", 
+			".css": "text/css",
+			".txt": "text/plain",
+			".jpg": "image/jpeg",
+			".gif": "image/gif",
+			".png": "image/png"
+		};
+		var isValidExt = validExtensions[ext];
+	 
+		if (isValidExt) {
+		localPath += filename;
+			path.exists(localPath, function(exists) {
+				if(exists) {
+					console.log("Serving file: " + localPath);
+					getFile(localPath, response, validExtensions[ext]);
+				} else {
+					console.log("File not found: " + localPath);
+					response.writeHead(404);
+					response.end();
+				}
+			});
+	 
+		} else {
+			console.log("Invalid file extension detected: " + ext)
+		}
 	} else {
-		console.log("Invalid file extension detected: " + ext)
+		console.log('render page');
+		upload(response,postData);
 	}
 
 }
