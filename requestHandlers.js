@@ -84,9 +84,18 @@ function getFile(localPath,response,ext) {
 
 function upload(response,postData) {
 	console.log('Request handler for upload called');
-	response.writeHead(200,{"Content-type":"text/plain"});
-	response.write("You had sent:" +querystring.parse(postData).text);
+	response.writeHead(200,{"Content-type":"text/html"});
+	response.write("You had sent:" +displayResult(postData));
 	response.end();
+}
+
+function displayResult(postData) {
+	var firstNameHtml = '<div class="firstname">FirstName:' + querystring.parse(postData).firstname + '</div>';
+	var lastNameHtml = '<div class="lastname">LastName:' + querystring.parse(postData).lastname + '</div>';
+	var grievencesHtml = '<div class="grieviences">Your Grieviences:' + querystring.parse(postData).text + '</div>';
+	
+	var bodyHtml = firstNameHtml + lastNameHtml + grievencesHtml;
+	return bodyHtml;
 }
 
 exports.start = start;
